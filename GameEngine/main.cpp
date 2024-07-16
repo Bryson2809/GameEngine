@@ -6,12 +6,13 @@
 #include "Body.h"
 #include "Rectangle.h"
 #include "Constants.h"
+#include "Collision.h"
 
 int main()
 {
     sf::ContextSettings settings;
 
-    sf::RenderWindow window(sf::VideoMode(1920, 1080), "My Window");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "My Window");
     window.setTitle("Game Engine");
 
     window.setActive();
@@ -23,10 +24,8 @@ int main()
     bool moveLeft = false;
     bool moveRight = false;
 
-    sf::CircleShape circle(50.f);
-    circle.setFillColor(sf::Color(100, 250, 50));
-
-    Rect rectangle(sf::Vector2f(0.f, 0.f), 50.f, 50.f);
+    Rect rectangle(sf::Vector2f(0.f, 0.f), 50.f, 50.f, 25.f, true, sf::Color(0, 0, 0));
+    Rect stationaryRectangle(sf::Vector2f(500.f, 500.f), 50.f, 50.f, 0.f, false, sf::Color(0, 0, 0));
 
     sf::Vector2f position = {};
 
@@ -72,12 +71,15 @@ int main()
                     break;
             }
         }
+        
+        bool colliding = Collision::polygonVPolygon(rectangle, stationaryRectangle);
 
         rectangle.update();
-
+        
         window.clear(sf::Color::Black);
 
         rectangle.draw(window);
+        stationaryRectangle.draw(window);
 
         window.display();
 
