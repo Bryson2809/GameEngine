@@ -2,37 +2,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Constants.h"
-
-struct Vector2 {
-	float x;
-	float y;
-
-	inline void operator=(Vector2 vec) {
-		this->x = vec.x;
-		this->y = vec.y;
-	}
-
-	inline Vector2 operator-(Vector2 vec) {
-		return { this->x - vec.x, this->y - vec.y };
-	}
-
-	inline Vector2 operator+(Vector2 vec) {
-		return { this->x + vec.x, this->y + vec.y };
-	}
-
-	inline Vector2 operator/(float n) {
-		return { this->x / n, this->y / n };
-	}
-
-	inline static float dot(Vector2 vec1, Vector2 vec2) {
-		return (vec1.x * vec2.x) + (vec1.y * vec2.y);
-	}
-
-	inline static Vector2 normalize(Vector2 vec) {
-		float magnitude = sqrtf((vec.x * vec.x) + (vec.y * vec.y));
-		return vec / magnitude;
-	}
-};
+#include "Vector2.h"
 
 class Body : public sf::Drawable 
 {
@@ -44,21 +14,37 @@ private:
 	bool isControllable;
 	std::vector<Vector2> vertices;
 
+	// Physics
+	float mass;
+	Vector2 velocity;
+	Vector2 acceleration;
+
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 	virtual void draw(sf::RenderTarget& target) const;
 
 public:
 	Body(); // Default Contructor
-	Body(sf::Vector2f position, bool isControllable, sf::Color color);
+	Body(sf::Vector2f position, bool isControllable, sf::Color color, float mass);
 	~Body();
 
 	sf::Vector2f getPosition();
-	float getDeltaTime();
+	virtual float getDeltaTime();
 	bool getIsControllable();
 	virtual std::vector<Vector2> getVertices();
+	virtual float getMass();
+	virtual Vector2 getVelocity();
+	virtual Vector2 getAcceleration();
 
 	virtual void setPosition(sf::Vector2f position);
 	virtual void setColor(sf::Color color);
+	virtual void setMass(float mass);
+	virtual void setVelocity(Vector2 velocity);
+	virtual void setAcceleration(Vector2 acceleration);
+
+	// Physics calculations
+	virtual void calculatePosition();
+	virtual void calculateVelocity();
+	virtual void calculateAcceleration();
 
 	virtual void update();
 };

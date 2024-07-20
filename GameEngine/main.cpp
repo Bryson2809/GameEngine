@@ -24,8 +24,8 @@ int main()
     bool moveLeft = false;
     bool moveRight = false;
 
-    Rect rectangle(sf::Vector2f(0.f, 0.f), 50.f, 50.f, 25.f, true, sf::Color(0, 0, 0));
-    Rect stationaryRectangle(sf::Vector2f(500.f, 500.f), 50.f, 50.f, 0.f, false, sf::Color(0, 0, 0));
+    Rect rectangle(sf::Vector2f(0.f, 0.f), 50.f, 50.f, 25.f, true, sf::Color(0, 0, 0), 10.f);
+    Rect stationaryRectangle(sf::Vector2f(500.f, 500.f), 50.f, 50.f, 0.f, false, sf::Color(0, 0, 0), 10.f);
 
     sf::Vector2f position = {};
 

@@ -12,7 +12,7 @@ Rect::Rect() {
 	this->calculateVertices();
 }
 
-Rect::Rect(sf::Vector2f position, float width, float height, float moveSpeed, bool isControllable, sf::Color color) : Body::Body(position, isControllable, color) {
+Rect::Rect(sf::Vector2f position, float width, float height, float moveSpeed, bool isControllable, sf::Color color, float mass) : Body::Body(position, isControllable, color, mass) {
 	this->position = position;
 	this->width = width;
 	this->height = height;
@@ -21,6 +21,8 @@ Rect::Rect(sf::Vector2f position, float width, float height, float moveSpeed, bo
 	this->isControllable = isControllable;
 	this->vertices = std::vector<Vector2>(4, { 0.f, 0.f });
 	this->color = color;
+	this->setMass(mass);
+	this->setAcceleration(Constants::GRAVITY);
 
 	this->calculateVertices();
 }
@@ -55,11 +57,28 @@ float Rect::getMoveSpeed() {
 	return this->moveSpeed;
 }
 
+float Rect::getDeltaTime() {
+	return this->deltaTime;
+}
+
 std::vector<Vector2> Rect::getVertices() {
 	return this->vertices;
 }
 
+float Rect::getMass() {
+	return this->mass;
+}
+
+Vector2 Rect::getVelocity() {
+	return this->velocity;
+}
+
+Vector2 Rect::getAcceleration() {
+	return this->acceleration;
+}
+
 void Rect::setPosition(sf::Vector2f position) {
+	__super::setPosition(position);
 	this->position = position;
 }
 
@@ -83,8 +102,31 @@ void Rect::setColor(sf::Color color) {
 	this->color = color;
 }
 
+void Rect::setMass(float mass) {
+	__super::setMass(mass);
+	this->mass = mass;
+}
+
+void Rect::setVelocity(Vector2 velocity) {
+	__super::setVelocity(velocity);
+	this->velocity = velocity;
+}
+
+void Rect::setAcceleration(Vector2 acceleration) {
+	__super::setAcceleration(acceleration);
+	this->acceleration = acceleration;
+}
+
 void Rect::update() {
 	this->calculateDeltaTime();
+
+	if (this->getPosition().y >= 500) {
+		this->setVelocity({ 0.f, 0.f });
+		this->setAcceleration({ 0.f, 0.f });
+	}
+
+	this->calculateVelocity();
+	this->calculatePosition();
 
 	if (this->isControllable) {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
@@ -151,4 +193,21 @@ void Rect::calculateVertices() {
 	/*for (Vector2 v : vertices) {
 		std::cout << v.x << ", " << v.y << std::endl;
 	}*/
+}
+
+void Rect::calculatePosition() {
+	__super::calculatePosition();
+	Vector2 position = { this->position.x, this->position.y };
+	position += (this->getVelocity() * this->getDeltaTime()) + (this->getAcceleration() * 0.5f * (this->getDeltaTime() * this->getDeltaTime()));
+	this->setPosition(Vector2::transformToVector2f(position));
+}
+
+void Rect::calculateVelocity() {
+	__super::calculateVelocity();
+	Vector2 velocity = this->getVelocity() + this->getAcceleration() * this->getDeltaTime();
+	this->setVelocity(velocity);
+}
+
+void Rect::calculateAcceleration() {
+	__super::calculateAcceleration();
 }
