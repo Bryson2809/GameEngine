@@ -189,23 +189,14 @@ void Rect::calculateVertices() {
 	this->vertices[1] = { this->position.x + (this->width / 2), this->position.y - (this->height / 2) };
 	this->vertices[2] = { this->position.x + (this->width / 2), this->position.y + (this->height / 2) };
 	this->vertices[3] = { this->position.x - (this->width / 2), this->position.y + (this->height / 2) };
-
-	/*for (Vector2 v : vertices) {
-		std::cout << v.x << ", " << v.y << std::endl;
-	}*/
 }
 
 void Rect::calculatePosition() {
 	__super::calculatePosition();
-	Vector2 position = { this->position.x, this->position.y };
-	position += (this->getVelocity() * this->getDeltaTime()) + (this->getAcceleration() * 0.5f * (this->getDeltaTime() * this->getDeltaTime()));
-	this->setPosition(Vector2::transformToVector2f(position));
 }
 
 void Rect::calculateVelocity() {
 	__super::calculateVelocity();
-	Vector2 velocity = this->getVelocity() + this->getAcceleration() * this->getDeltaTime();
-	this->setVelocity(velocity);
 }
 
 void Rect::calculateAcceleration() {
