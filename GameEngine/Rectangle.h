@@ -13,8 +13,10 @@ private:
 	float height;
 	float deltaTime;
 	float moveSpeed;
+	float rotation;
 	bool isControllable;
 	std::vector<Vector2> vertices;
+	std::vector<Vector2> relativeVertices;
 
 	// Physics
 	float mass;
@@ -31,16 +33,19 @@ public:
 	~Rect();
 
 	sf::Vector2f getPosition();
+	float getRotation();
 	float getWidth();
 	float getHeight();
 	float getMoveSpeed();
 	float getDeltaTime();
 	std::vector<Vector2> getVertices();
+	std::vector<Vector2> getRelativeVertices();
 	float getMass();
 	Vector2 getVelocity();
 	Vector2 getAcceleration();
 
 	void setPosition(sf::Vector2f position);
+	void setRotation(float rotation);
 	void setWidth(float width);
 	void setHeight(float height);
 	void setMoveSpeed(float moveSpeed);
@@ -56,9 +61,11 @@ public:
 
 	void calculateDeltaTime();
 	void calculateVertices();
+	void calculateRelativeVertices();
 
 	// Physics Calculations
 	void calculatePosition();
 	void calculateVelocity();
 	void calculateAcceleration();
+	Vector2 calculateRotation(float x, float y, float relativeX, float relativeY);
 };

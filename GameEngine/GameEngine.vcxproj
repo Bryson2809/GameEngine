@@ -136,6 +136,7 @@
     <ClCompile Include="Body.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Constants.cpp" />
+    <ClCompile Include="Environment.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Rectangle.cpp" />
   </ItemGroup>
@@ -143,6 +144,7 @@
     <ClInclude Include="Body.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="Environment.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>

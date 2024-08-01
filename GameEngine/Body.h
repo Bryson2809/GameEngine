@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "Constants.h"
 #include "Vector2.h"
+#include "Environment.h"
 
 class Body : public sf::Drawable 
 {
@@ -11,6 +12,7 @@ private:
 	sf::Clock clock;
 	sf::Color color;
 	float deltaTime;
+	float rotation;
 	bool isControllable;
 	std::vector<Vector2> vertices;
 
@@ -28,6 +30,7 @@ public:
 	~Body();
 
 	sf::Vector2f getPosition();
+	virtual float getRotation();
 	virtual float getDeltaTime();
 	bool getIsControllable();
 	virtual std::vector<Vector2> getVertices();
@@ -36,6 +39,7 @@ public:
 	virtual Vector2 getAcceleration();
 
 	virtual void setPosition(sf::Vector2f position);
+	virtual void setRotation(float rotation);
 	virtual void setColor(sf::Color color);
 	virtual void setMass(float mass);
 	virtual void setVelocity(Vector2 velocity);

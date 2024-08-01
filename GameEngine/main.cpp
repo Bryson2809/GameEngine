@@ -24,7 +24,7 @@ int main()
     bool moveLeft = false;
     bool moveRight = false;
 
-    Rect rectangle(sf::Vector2f(0.f, 0.f), 50.f, 50.f, 25.f, true, sf::Color(0, 0, 0), 10.f);
+    Rect rectangle(sf::Vector2f(50.f, 50.f), 50.f, 50.f, 25.f, true, sf::Color(0, 0, 0), 10.f);
     Rect stationaryRectangle(sf::Vector2f(500.f, 500.f), 50.f, 50.f, 0.f, false, sf::Color(0, 0, 0), 10.f);
 
     sf::Vector2f position = {};
@@ -36,13 +36,6 @@ int main()
     while (running) {
         elapsedTime = clock.restart();
         deltaTime = elapsedTime.asSeconds();
-
-        if (deltaTime < Constants::MAX_FRAMES) {
-            deltaTime = Constants::MAX_FRAMES;
-        }
-        else if (deltaTime > Constants::MIN_FRAMES) {
-            deltaTime = Constants::MIN_FRAMES;
-        }
 
         sf::Event event;
         position = rectangle.getPosition();
@@ -83,7 +76,9 @@ int main()
 
         window.display();
 
-        std::cout << "FPS: " << 1 / deltaTime << std::endl;
+        while (clock.getElapsedTime().asMilliseconds() < (1000 / Constants::MAX_FRAMES)) {}
+
+        //std::cout << "FPS: " << (round) (1 / deltaTime) << std::endl;
     }
 
     return 0;

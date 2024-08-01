@@ -27,6 +27,10 @@ sf::Vector2f Body::getPosition()
 	return this->position;
 }
 
+float Body::getRotation() {
+	return this->rotation;
+}
+
 bool Body::getIsControllable() {
 	return this->isControllable;
 }
@@ -53,6 +57,10 @@ Vector2 Body::getAcceleration() {
 
 void Body::setPosition(sf::Vector2f position) {
 	this->position = position;
+}
+
+void Body::setRotation(float rotation) {
+	this->rotation = rotation;
 }
 
 void Body::setColor(sf::Color color) {
@@ -84,7 +92,7 @@ void Body::draw(sf::RenderTarget& target) const
 // Physics Calculations
 void Body::calculatePosition() {
 	Vector2 position = { this->position.x, this->position.y };
-	position += (this->getVelocity() * this->getDeltaTime()) + (this->getAcceleration() * 0.5f * (this->getDeltaTime() * this->getDeltaTime()));
+	position += (this->getVelocity() * this->getDeltaTime()) + (this->getAcceleration() * 0.5f * (this->getDeltaTime() * this->getDeltaTime())) * Environment::scale;
 	this->setPosition(Vector2::transformToVector2f(position));
 }
 
