@@ -21,13 +21,13 @@ private:
 	Vector2 velocity;
 	Vector2 acceleration;
 
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-	virtual void draw(sf::RenderTarget& target) const;
-
 public:
 	Body(); // Default Contructor
 	Body(sf::Vector2f position, bool isControllable, sf::Color color, float mass);
 	~Body();
+
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+	virtual void draw(sf::RenderTarget& target) const;
 
 	sf::Vector2f getPosition();
 	virtual float getRotation();
@@ -45,10 +45,14 @@ public:
 	virtual void setVelocity(Vector2 velocity);
 	virtual void setAcceleration(Vector2 acceleration);
 
+	virtual void calculateVertices();
+	virtual void calcualteRelaticeVertices();
+
 	// Physics calculations
 	virtual void calculatePosition();
 	virtual void calculateVelocity();
 	virtual void calculateAcceleration();
+	virtual Vector2 calculateRotation(float x, float y, float relativeX, float relativeY);
 
 	virtual void update();
 };

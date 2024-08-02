@@ -24,10 +24,11 @@ int main()
     bool moveLeft = false;
     bool moveRight = false;
 
-    Rect rectangle(sf::Vector2f(50.f, 50.f), 50.f, 50.f, 25.f, true, sf::Color(0, 0, 0), 10.f);
-    Rect stationaryRectangle(sf::Vector2f(500.f, 500.f), 50.f, 50.f, 0.f, false, sf::Color(0, 0, 0), 10.f);
+    Rect rectangle(sf::Vector2f(50.f, 50.f), 50.f, 50.f, 25.f, true, sf::Color(100, 250, 50), 10.f);
+    Rect rectangle2(sf::Vector2f(200.f, 50.f), 50.f, 50.f, 25.f, false, sf::Color(100, 250, 50), 10.f);
+    Rect stationaryRectangle(sf::Vector2f(400.f, 400.f), 50.f, 50.f, 25.f, false, sf::Color(100, 250, 50), 10.f);
 
-    sf::Vector2f position = {};
+    std::vector<Body*> bodies = { &rectangle, &rectangle2 };
 
     sf::Clock clock;
     sf::Time elapsedTime;
@@ -38,7 +39,6 @@ int main()
         deltaTime = elapsedTime.asSeconds();
 
         sf::Event event;
-        position = rectangle.getPosition();
 
         while (window.pollEvent(event)) {
             switch (event.type) {
@@ -65,13 +65,17 @@ int main()
             }
         }
         
-        bool colliding = Collision::polygonVPolygon(rectangle, stationaryRectangle);
-
-        rectangle.update();
-        
         window.clear(sf::Color::Black);
 
-        rectangle.draw(window);
+        for (int i = 0; i < bodies.size(); i++) {
+            bodies[i]->update();
+            Collision::polygonVPolygon(*bodies[i], stationaryRectangle);
+            for (int j = 1; j < bodies.size(); j++) {
+
+            }
+            bodies[i]->draw(window);
+        }
+
         stationaryRectangle.draw(window);
 
         window.display();

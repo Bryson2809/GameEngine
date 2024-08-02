@@ -1,3 +1,3 @@
 #include "Environment.h"
 
-float Environment::scale = 1;
+float Environment::scale = 10;

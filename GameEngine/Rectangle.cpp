@@ -22,6 +22,7 @@ Rect::Rect() {
 	this->calculateVertices();
 }
 
+
 Rect::Rect(sf::Vector2f position, float width, float height, float moveSpeed, bool isControllable, sf::Color color, float mass) : Body::Body(position, isControllable, color, mass) {
 	timer.restart();
 	timerOn = true;
@@ -155,7 +156,7 @@ void Rect::setAcceleration(Vector2 acceleration) {
 }
 
 void Rect::update() {
-	if (this->getPosition().y >= 1000) {
+	if (this->getPosition().y >= 500) {
 		if (timerOn) {
 			std::cout << "Time of fall: " << timer.getElapsedTime().asSeconds() << "s" << std::endl;
 			std::cout << "Velocity on impact: " << "{ " << this->velocity.x << "m/s, " << this->velocity.y << "m/s }" << std::endl;
@@ -170,36 +171,36 @@ void Rect::update() {
 
 	this->calculateVelocity();
 	this->calculatePosition();
-	this->calculateVertices();
+	//this->calculateVertices();
 
 	if (this->isControllable) {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-			position.x += this->moveSpeed * deltaTime;
+			position.x += this->moveSpeed * deltaTime * Environment::scale;
 			this->setPosition(position);
 			this->calculateVertices();
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-			position.x -= this->moveSpeed * deltaTime;
+			position.x -= this->moveSpeed * deltaTime * Environment::scale;
 			this->setPosition(position);
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			position.y -= this->moveSpeed * deltaTime;
+			position.y -= this->moveSpeed * deltaTime * Environment::scale;
 			this->setPosition(position);
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-			position.y += this->moveSpeed * deltaTime;
+			position.y += this->moveSpeed * deltaTime * Environment::scale;
 			this->setPosition(position);
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-			this->setRotation(this->getRotation() + 5.f * this->deltaTime);
+			this->setRotation(this->getRotation() + 125.f * this->deltaTime);
 			this->calculateVertices();
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-			this->setRotation(this->getRotation() - 5.f);
+			this->setRotation(this->getRotation() - 125.f * this->deltaTime);
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
@@ -241,13 +242,6 @@ void Rect::draw(sf::RenderTarget& target) const {
 void Rect::calculateDeltaTime() {
 	float deltaTime = this->clock.restart().asSeconds();
 
-	/*if (deltaTime < Constants::MAX_FRAMES) {
-		deltaTime = Constants::MAX_FRAMES;
-	}
-	else if (deltaTime > Constants::MIN_FRAMES) {
-		deltaTime = Constants::MIN_FRAMES;
-	}*/
-
 	this->setDeltaTime(deltaTime);
 }
 
@@ -259,8 +253,6 @@ void Rect::calculateVertices() {
 	this->vertices[2] = this->calculateRotation(this->getPosition().x + (this->getWidth() / 2), this->getPosition().y + (this->getHeight() / 2), this->relativeVertices[2].x, this->relativeVertices[2].y);
 
 	this->vertices[3] = this->calculateRotation(this->getPosition().x - (this->getWidth() / 2), this->getPosition().y + (this->getHeight() / 2), this->relativeVertices[3].x, this->relativeVertices[3].y);
-
-	
 }
 
 void Rect::calculateRelativeVertices() {
@@ -285,10 +277,6 @@ void Rect::calculateAcceleration() {
 	__super::calculateAcceleration();
 }
 
-// TODO clean this shit up and put all of this as virtual methods in Body
 Vector2 Rect::calculateRotation(float x, float y, float relativeX, float relativeY) {
-	x = (relativeX * Constants::cos(this->getRotation()) - (relativeY * Constants::sin(this->getRotation()))) + this->position.x;
-	y = (relativeX * Constants::sin(this->getRotation()) + (relativeY * Constants::cos(this->getRotation()))) + this->position.y;
-
-	return { x, y };
+	return __super::calculateRotation(x, y, relativeX, relativeY);
 }

@@ -79,6 +79,14 @@ void Body::setAcceleration(Vector2 acceleration) {
 	this->acceleration = acceleration;
 }
 
+void Body::calculateVertices() {
+
+}
+
+void Body::calcualteRelaticeVertices() {
+
+}
+
 void Body::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 {
 	
@@ -92,8 +100,9 @@ void Body::draw(sf::RenderTarget& target) const
 // Physics Calculations
 void Body::calculatePosition() {
 	Vector2 position = { this->position.x, this->position.y };
-	position += (this->getVelocity() * this->getDeltaTime()) + (this->getAcceleration() * 0.5f * (this->getDeltaTime() * this->getDeltaTime())) * Environment::scale;
+	position += ((this->getVelocity() * this->getDeltaTime()) + (this->getAcceleration() * 0.5f * (this->getDeltaTime() * this->getDeltaTime()))) * Environment::scale;
 	this->setPosition(Vector2::transformToVector2f(position));
+	this->calculateVertices();
 }
 
 void Body::calculateVelocity() {
@@ -105,4 +114,13 @@ void Body::calculateAcceleration() {
 
 }
 
-void Body::update() { }
+Vector2 Body::calculateRotation(float x, float y, float relativeX, float relativeY) {
+	x = (relativeX * Constants::cos(this->getRotation()) - (relativeY * Constants::sin(this->getRotation()))) + this->position.x;
+	y = (relativeX * Constants::sin(this->getRotation()) + (relativeY * Constants::cos(this->getRotation()))) + this->position.y;
+
+	return { x, y };
+}
+
+void Body::update() {
+	std::cout << "body" << std::endl;
+}

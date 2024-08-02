@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Collision.h"
-#include "Body.h"
 
 bool Collision::polygonVPolygon(Body& b1, Body& b2) {
 	std::vector<Vector2> verticesA = b1.getVertices();
