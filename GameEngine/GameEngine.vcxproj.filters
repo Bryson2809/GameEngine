@@ -55,6 +55,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="README.md" />
+    <None Include="Formulas.md" />
   </ItemGroup>
 </Project>

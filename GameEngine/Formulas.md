@@ -1,6 +1,6 @@
-#Physics Engine
+# Physics Engine
 
-##Legned
+## Legned
 a = acceleration
 d = delta_x = distance
 E = energy
@@ -21,7 +21,7 @@ u = coefficient of friction
 x = position
 delta_var = var - var_0
 
-##Physics Formulas
+## Physics Formulas
 v = v_0 + at
 d = v_0t + (1/2)at^2
 x = x_0 + v_0t + (1/2)at^2
