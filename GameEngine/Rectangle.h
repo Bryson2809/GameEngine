@@ -15,6 +15,7 @@ private:
 	float moveSpeed;
 	float rotation;
 	bool isControllable;
+	bool isColliding;
 	std::vector<Vector2> vertices;
 	std::vector<Vector2> relativeVertices;
 
@@ -22,6 +23,7 @@ private:
 	float mass;
 	Vector2 velocity;
 	Vector2 acceleration;
+	Vector2 netForce;
 
 
 	void setDeltaTime(float deltaTime);
@@ -43,6 +45,7 @@ public:
 	float getMass();
 	Vector2 getVelocity();
 	Vector2 getAcceleration();
+	bool getIsColliding();
 
 	void setPosition(sf::Vector2f position);
 	void setRotation(float rotation);
@@ -53,6 +56,7 @@ public:
 	void setMass(float mass);
 	void setVelocity(Vector2 velocity);
 	void setAcceleration(Vector2 acceleration);
+	void setIsColliding(bool isColliding);
 
 	void update();
 
@@ -63,9 +67,15 @@ public:
 	void calculateVertices();
 	void calculateRelativeVertices();
 
+	// Handlers
+	void handleCollisionEnter();
+	void handleCollisionExit();
+
 	// Physics Calculations
 	void calculatePosition();
 	void calculateVelocity();
 	void calculateAcceleration();
 	Vector2 calculateRotation(float x, float y, float relativeX, float relativeY);
+	void addForce(Vector2 newtons);
+	void calculateAccelerationDueToForce();
 };

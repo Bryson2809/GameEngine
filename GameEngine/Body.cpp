@@ -6,6 +6,10 @@ Body::Body()
 	this->isControllable = false;
 	this->deltaTime = 0.f;
 	this->color = sf::Color(255, 255, 255);
+	this->mass = 0;
+	this->velocity = { 0.f, 0.f };
+	this->acceleration = Constants::GRAVITY;
+	this->isColliding = false;
 }
 
 Body::Body(sf::Vector2f position, bool isControllable, sf::Color color, float mass) 
@@ -16,8 +20,9 @@ Body::Body(sf::Vector2f position, bool isControllable, sf::Color color, float ma
 	this->setColor(color);
 	this->setMass(mass);
 	this->setVelocity({ 0.f, 0.f });
-	this->setAcceleration({ 0.f, 0.f });
 	this->setAcceleration(Constants::GRAVITY);
+
+	this->isColliding = false;
 }
 
 Body::~Body() {}
@@ -55,6 +60,10 @@ Vector2 Body::getAcceleration() {
 	return this->acceleration;
 }
 
+bool Body::getIsColliding() {
+	return this->isColliding;
+}
+
 void Body::setPosition(sf::Vector2f position) {
 	this->position = position;
 }
@@ -79,12 +88,26 @@ void Body::setAcceleration(Vector2 acceleration) {
 	this->acceleration = acceleration;
 }
 
+void Body::setIsColliding(bool isColliding) {
+	this->isColliding = isColliding;
+}
+
 void Body::calculateVertices() {
 
 }
 
 void Body::calcualteRelaticeVertices() {
 
+}
+
+void Body::handleCollisionEnter() {
+	this->isColliding = true;
+	this->setColor(sf::Color(250, 0, 0));
+}
+
+void Body::handleCollisionExit() {
+	this->isColliding = false;
+	std::cout << "no" << std::endl;
 }
 
 void Body::draw(sf::RenderTarget& target, sf::RenderStates states) const 
@@ -119,6 +142,21 @@ Vector2 Body::calculateRotation(float x, float y, float relativeX, float relativ
 	y = (relativeX * Constants::sin(this->getRotation()) + (relativeY * Constants::cos(this->getRotation()))) + this->position.y;
 
 	return { x, y };
+}
+
+void Body::addForce(Vector2 newtons) {
+	this->netForce += newtons;
+}
+
+void Body::calculateAccelerationDueToForce() {
+	float x = 0;
+	float y = 0;
+	if (this->mass != 0) {
+		float x = (this->netForce.x / this->mass);
+		float y = (this->netForce.y / this->mass);
+	}
+
+	this->acceleration += { x, y };
 }
 
 void Body::update() {

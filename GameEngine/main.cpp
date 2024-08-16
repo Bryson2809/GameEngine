@@ -26,7 +26,7 @@ int main()
 
     Rect rectangle(sf::Vector2f(50.f, 50.f), 50.f, 50.f, 25.f, true, sf::Color(100, 250, 50), 10.f);
     Rect rectangle2(sf::Vector2f(200.f, 50.f), 50.f, 50.f, 25.f, false, sf::Color(100, 250, 50), 10.f);
-    Rect stationaryRectangle(sf::Vector2f(400.f, 400.f), 50.f, 50.f, 25.f, false, sf::Color(100, 250, 50), 10.f);
+    Rect stationaryRectangle(sf::Vector2f(400.f, 600.f), 800.f, 50.f, 25.f, false, sf::Color(100, 250, 50), 10.f);
 
     std::vector<Body*> bodies = { &rectangle, &rectangle2 };
 
@@ -54,6 +54,9 @@ int main()
                         window.close();
                         running = false;
                     }
+                    if (event.key.scancode == sf::Keyboard::Scan::R) {
+                        rectangle.setPosition(sf::Vector2f(100.f, 100.f));
+                    }
 
                     break;
 
@@ -64,15 +67,18 @@ int main()
                     break;
             }
         }
-        
+
         window.clear(sf::Color::Black);
 
         for (int i = 0; i < bodies.size(); i++) {
             bodies[i]->update();
-            Collision::polygonVPolygon(*bodies[i], stationaryRectangle);
-            for (int j = 1; j < bodies.size(); j++) {
 
+            for (int j = i + 1; j < bodies.size(); j++) {
+                Collision::polygonVPolygon(*bodies[i], *bodies[j]);
             }
+
+            Collision::polygonVPolygon(*bodies[i], stationaryRectangle);
+
             bodies[i]->draw(window);
         }
 

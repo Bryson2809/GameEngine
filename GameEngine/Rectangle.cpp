@@ -17,6 +17,7 @@ Rect::Rect() {
 	this->setMass(mass);
 	this->setAcceleration(Constants::GRAVITY);
 	this->setRotation(0.f);
+	this->isColliding = false;
 
 	this->calculateRelativeVertices();
 	this->calculateVertices();
@@ -42,6 +43,8 @@ Rect::Rect(sf::Vector2f position, float width, float height, float moveSpeed, bo
 	this->setAcceleration(Constants::GRAVITY);
 	this->setRotation(0.f);
 
+	this->isColliding = false;
+
 	this->calculateRelativeVertices();
 	this->calculateVertices();
 }
@@ -59,6 +62,8 @@ Rect::Rect(Body& body) {
 	this->setMass(mass);
 	this->setAcceleration(Constants::GRAVITY);
 	this->setRotation(body.getRotation());
+
+	this->isColliding = false;
 
 	this->calculateRelativeVertices();
 	this->calculateVertices();
@@ -110,6 +115,10 @@ Vector2 Rect::getAcceleration() {
 	return this->acceleration;
 }
 
+bool Rect::getIsColliding() {
+	return __super::getIsColliding();
+}
+
 void Rect::setPosition(sf::Vector2f position) {
 	__super::setPosition(position);
 	this->position = position;
@@ -155,53 +164,62 @@ void Rect::setAcceleration(Vector2 acceleration) {
 	this->acceleration = acceleration;
 }
 
-void Rect::update() {
-	if (this->getPosition().y >= 500) {
-		if (timerOn) {
-			std::cout << "Time of fall: " << timer.getElapsedTime().asSeconds() << "s" << std::endl;
-			std::cout << "Velocity on impact: " << "{ " << this->velocity.x << "m/s, " << this->velocity.y << "m/s }" << std::endl;
-			timerOn = false;
-		}
+void Rect::setIsColliding(bool isColliding) {
+	__super::setIsColliding(isColliding);
+}
 
-		this->setVelocity({ 0.f, 0.f });
-		this->setAcceleration({ 0.f, 0.f });
-	}
+void Rect::update() {
+	this->netForce = { 0.f, 0.f };
 
 	this->calculateDeltaTime();
 
 	this->calculateVelocity();
 	this->calculatePosition();
-	//this->calculateVertices();
+
+	// std::cout << this->netForce << std::endl;
 
 	if (this->isControllable) {
+		// Move Right
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 			position.x += this->moveSpeed * deltaTime * Environment::scale;
 			this->setPosition(position);
 			this->calculateVertices();
 		}
 
+		// Move Left
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			position.x -= this->moveSpeed * deltaTime * Environment::scale;
 			this->setPosition(position);
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+		// Jump
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+			std::cout << "space" << std::endl;
+			this->addForce({ 0.f, -2500.f });
+		}
+
+		// Move Up
+		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 			position.y -= this->moveSpeed * deltaTime * Environment::scale;
 			this->setPosition(position);
-		}
+		}*/
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+		// Move Down
+		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 			position.y += this->moveSpeed * deltaTime * Environment::scale;
 			this->setPosition(position);
-		}
+		}*/
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+		// Rotate right
+		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 			this->setRotation(this->getRotation() + 125.f * this->deltaTime);
 			this->calculateVertices();
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+		}*/
+
+		// Rotate Left
+		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
 			this->setRotation(this->getRotation() - 125.f * this->deltaTime);
-		}
+		}*/
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
 			std::cout << "Position: { " << this->position.x << ", " << this->position.y << " }" << std::endl;
@@ -216,6 +234,7 @@ void Rect::update() {
 			std::cout << std::endl;
 		}
 	}
+	this->calculateAccelerationDueToForce();
 }
 
 void Rect::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -265,6 +284,15 @@ void Rect::calculateRelativeVertices() {
 	this->relativeVertices[3] = { -width / 2, height / 2 };
 }
 
+void Rect::handleCollisionEnter() {
+	__super::handleCollisionEnter();
+	this->velocity = { 0.f, 0.f };
+}
+
+void Rect::handleCollisionExit() {
+	__super::handleCollisionExit();
+}
+
 void Rect::calculatePosition() {
 	__super::calculatePosition();
 }
@@ -279,4 +307,25 @@ void Rect::calculateAcceleration() {
 
 Vector2 Rect::calculateRotation(float x, float y, float relativeX, float relativeY) {
 	return __super::calculateRotation(x, y, relativeX, relativeY);
+}
+
+void Rect::addForce(Vector2 newtons) {
+	__super::addForce(newtons);
+	this->netForce += newtons;
+}
+
+void Rect::calculateAccelerationDueToForce() {
+	__super::calculateAccelerationDueToForce();
+
+	float x = 0;
+	float y = 0;
+	if (this->mass != 0) {
+		x = (this->netForce.x / this->mass);
+		y = (this->netForce.y / this->mass);
+	}
+
+	this->acceleration.y = Constants::GRAVITY.y;
+	this->acceleration += { x, y };
+
+	std::cout << this->velocity << std::endl;
 }

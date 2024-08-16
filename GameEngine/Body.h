@@ -5,7 +5,7 @@
 #include "Vector2.h"
 #include "Environment.h"
 
-class Body : public sf::Drawable 
+class Body : public sf::Drawable
 {
 private:
 	sf::Vector2f position;
@@ -14,12 +14,14 @@ private:
 	float deltaTime;
 	float rotation;
 	bool isControllable;
+	bool isColliding;
 	std::vector<Vector2> vertices;
 
 	// Physics
 	float mass;
 	Vector2 velocity;
 	Vector2 acceleration;
+	Vector2 netForce;
 
 public:
 	Body(); // Default Contructor
@@ -37,6 +39,7 @@ public:
 	virtual float getMass();
 	virtual Vector2 getVelocity();
 	virtual Vector2 getAcceleration();
+	virtual bool getIsColliding();
 
 	virtual void setPosition(sf::Vector2f position);
 	virtual void setRotation(float rotation);
@@ -44,15 +47,22 @@ public:
 	virtual void setMass(float mass);
 	virtual void setVelocity(Vector2 velocity);
 	virtual void setAcceleration(Vector2 acceleration);
+	virtual void setIsColliding(bool isColliding);
 
 	virtual void calculateVertices();
 	virtual void calcualteRelaticeVertices();
+
+	// Handlers
+	virtual void handleCollisionEnter();
+	virtual void handleCollisionExit();
 
 	// Physics calculations
 	virtual void calculatePosition();
 	virtual void calculateVelocity();
 	virtual void calculateAcceleration();
 	virtual Vector2 calculateRotation(float x, float y, float relativeX, float relativeY);
+	virtual void addForce(Vector2 newtons);
+	virtual void calculateAccelerationDueToForce();
 
 	virtual void update();
 };

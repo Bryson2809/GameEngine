@@ -1,15 +1,21 @@
 #include <iostream>
+#include <map>
+#include <math.h>
 #include "Collision.h"
 
-bool Collision::polygonVPolygon(Body& b1, Body& b2) {
-	std::vector<Vector2> verticesA = b1.getVertices();
-	std::vector<Vector2> verticesB = b2.getVertices();
+bool Collision::polygonVPolygon(Body& body1, Body& body2) {
+	std::vector<Vector2> verticesA = body1.getVertices();
+	std::vector<Vector2> verticesB = body2.getVertices();
+
 
 	float maxA;
 	float maxB;
 
 	float minA;
 	float minB;
+
+	float smallestOverlap = FLT_MAX;
+	Vector2 axisOfLeastOverlap = { 0.f, 0.f };
 
 	for (int i = 0; i < verticesA.size(); i++) {
 		Vector2 edge = verticesA[(i + 1) % verticesA.size()] - verticesA[i];
@@ -19,9 +25,15 @@ bool Collision::polygonVPolygon(Body& b1, Body& b2) {
 		Collision::projectVertices(verticesB, perpAxis, minB, maxB);
 
 		if (minA > maxB || minB > maxA) {
-			b1.setColor(sf::Color(100, 250, 50));
-			b2.setColor(sf::Color(100, 250, 50));
+			/*body1.handleCollisionExit();
+			body2.handleCollisionExit();*/
 			return false;
+		}
+
+		float overlap = calculateOverlap(minA, maxA, minB, maxB);
+		if (overlap < smallestOverlap) {
+			smallestOverlap = overlap;
+			axisOfLeastOverlap = edge;
 		}
 	}
 
@@ -33,14 +45,35 @@ bool Collision::polygonVPolygon(Body& b1, Body& b2) {
 		Collision::projectVertices(verticesB, perpAxis, minB, maxB);
 
 		if (minA > maxB || minB > maxA) {
-			b1.setColor(sf::Color(100, 250, 50));
-			b2.setColor(sf::Color(100, 250, 50));
+			/*body1.handleCollisionExit();
+			body2.handleCollisionExit();*/
+
 			return false;
 		}
+
+		float overlap = calculateOverlap(minA, maxA, minB, maxB);
+		if (overlap < smallestOverlap) {
+			smallestOverlap = overlap;
+			axisOfLeastOverlap = edge;
+		}
 	}
-	
-	b1.setColor(sf::Color(250, 0, 0));
-	b2.setColor(sf::Color(250, 0, 0));
+
+	body1.handleCollisionEnter();
+	body2.handleCollisionEnter();
+
+	/*Vector2 newPosition = axisOfLeastOverlap / (axisOfLeastOverlap.getLength());
+	newPosition = Vector2::normalize(newPosition);*/
+
+	Vector2 newPosition = Vector2::normalize(axisOfLeastOverlap).getNormal();
+
+	Vector2 direction = Vector2::convertVector2fToVector2(body1.getPosition()) - Vector2::convertVector2fToVector2(body2.getPosition());
+
+	if (Vector2::dot(newPosition, direction) < 0.f) {
+		newPosition *= -1;
+	}
+
+	body1.setPosition((Vector2::convertVector2fToVector2(body1.getPosition()) + Vector2::normalize(newPosition) * smallestOverlap).convertToVector2f());
+
 	return true;
 }
 
@@ -53,4 +86,22 @@ void Collision::projectVertices(std::vector<Vector2> vertices, Vector2 axis, flo
 		if (proj < min) min = proj;
 		if (proj > max) max = proj;
 	}
+}
+
+float Collision::calculateOverlap(float minA, float maxA, float minB, float maxB) {
+	/*if (maxA > maxB) {
+		return maxB - minA;
+	}
+	else {
+		return maxA - minB;
+	}*/
+	return std::min(maxA - minB, maxB - minA);
+}
+
+Vector2 Collision::getMTV(Vector2 axis, float overlap) {
+	float angle = atanf(axis.y / axis.x);
+	float x = Constants::cos(angle) * overlap;
+	float y = Constants::sin(angle) * overlap;
+
+	return { 0.f, 0.f };
 }
